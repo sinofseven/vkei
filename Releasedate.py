@@ -11,7 +11,9 @@ def main():
     try:
         getReleasedate()
     except:
-         print("カレンダー情報が取得できませんでした")
+        import traceback
+        traceback.print_exc()         
+        print("カレンダー情報が取得できませんでした")
 
 ## ヴィジュアル系カレンダーを読み込んでJSON化
 @retry(tries=4, delay=5, backoff=2)
@@ -30,13 +32,15 @@ def getReleasedate():
     rows = table.findAll("tr")
 
     # 値のみを配列に
-    jsonRow = []
-    for row in rows:        
+    data=[]
+    for row in rows:
+        jsonRow = []
         for cell in row.findAll(['td', 'th']):
-            jsonRow.append(cell.get_text())
-    
+                jsonRow.append(cell.get_text())
+        data.append(jsonRow)
+
     # Pythonオブジェクト→JSON文字列
-    jsonstring = json.dumps(jsonRow, ensure_ascii=False)
+    jsonstring = json.dumps(data, ensure_ascii=False)
     print(jsonstring)
 
 
