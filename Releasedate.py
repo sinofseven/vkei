@@ -9,8 +9,8 @@ url="http://www.brand-x.jp/page/38"
 
 def main():
     try:
-        data=getVcalendar()
-        print(data)
+        calendar=getVcalendar()
+        print(calendar)
     except:
         import traceback
         traceback.print_exc()         
