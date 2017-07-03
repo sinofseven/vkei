@@ -3,9 +3,13 @@ import json
 from retry import retry
 from urllib.request import urlopen
 from bs4 import BeautifulSoup
+from datetime import datetime, date, timedelta
 
 ## brand-x リリースカレンダーURL
 url="http://www.brand-x.jp/page/38"
+
+## 現在日付
+today=date.today()
 
 def main():
     try:
@@ -41,15 +45,25 @@ def getVcalendar():
                 title= ""
                 if i == 0:
                     header="date"
+                    year=today.year
+                    # 月、日の値のみ取得
+                    src = cell.get_text()
+                    dst = src.replace("月", "-", 1)
+                    dst = dst.replace("日", "", 1)
+                    body = str(year) + "-" + dst
                 elif i == 1:
                     header="artist"
+                    body=cell.get_text()
                 elif i == 2:
                     header="title"
+                    body=cell.get_text()
                 elif i == 3:
                     header="media"
+                    body=cell.get_text()
                 elif i == 4:
                     header="price"   
-                jsonRow.append([header,cell.get_text()])
+                    body=cell.get_text()
+                jsonRow.append([header,body])
                 i=i+1
         data.append(jsonRow)
     # Pythonオブジェクト→JSON文字列
