@@ -9,15 +9,16 @@ url="http://www.brand-x.jp/page/38"
 
 def main():
     try:
-        getReleasedate()
+        data=getVcalendar()
+        print(data)
     except:
         import traceback
         traceback.print_exc()         
         print("カレンダー情報が取得できませんでした")
 
 ## ヴィジュアル系カレンダーを読み込んでJSON化
-@retry(tries=4, delay=5, backoff=2)
-def getReleasedate():
+#@retry(tries=4, delay=5, backoff=2)
+def getVcalendar():
     # 参考URL：http://qiita.com/hujuu/items/b0339404b8b0460087f9
     # ブランドXカレンダーを読み込む
     html =urlopen(url)
@@ -35,14 +36,26 @@ def getReleasedate():
     data=[]
     for row in rows:
         jsonRow = []
-        for cell in row.findAll(['td', 'th']):
-                jsonRow.append(cell.get_text())
+        i=0
+        for cell in row.findAll(['td', 'th']):            
+                title= ""
+                if i == 0:
+                    header="date"
+                elif i == 1:
+                    header="artist"
+                elif i == 2:
+                    header="title"
+                elif i == 3:
+                    header="media"
+                elif i == 4:
+                    header="price"   
+                jsonRow.append([header,cell.get_text()])
+                i=i+1
         data.append(jsonRow)
-
     # Pythonオブジェクト→JSON文字列
-    jsonstring = json.dumps(data, ensure_ascii=False)
-    print(jsonstring)
-
+    jsondata = json.dumps(data, ensure_ascii=False)
+    return jsondata
+ 
 
 if __name__ == '__main__':
     main()
